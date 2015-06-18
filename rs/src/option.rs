@@ -17,7 +17,7 @@ mod tests {
     fn bench_add1(b : &mut Bencher) {
         b.iter(|| {
             let mut res = 0i32;
-            for _ in (0..1999) {
+            for _ in (0..2000) {
                 if res != -1 {
                     res = maybe_add1(res)
                 }
@@ -30,10 +30,13 @@ mod tests {
     fn bench_add2(b : &mut Bencher) {
         b.iter(|| {
             let mut res = Some(0);
-            for _ in (0..1999) {
+            for _ in (0..2000) {
                 res = res.and_then(maybe_add2);
             };
             res
         })
     }
 }
+
+// test option::tests::bench_add1 ... bench:      2840 ns/iter (+/- 323)
+// test option::tests::bench_add2 ... bench:      3221 ns/iter (+/- 436)
