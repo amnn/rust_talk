@@ -1,0 +1,4 @@
+[package]
+name = "rust_talk"
+version = "0.1.0"
+authors = ["Ashok Menon <amenon94@gmail.com>"]
