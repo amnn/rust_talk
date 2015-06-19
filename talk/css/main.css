@@ -1,0 +1,19 @@
+.col   { max-width: 40%; }
+.left  { float: left; }
+.right { float: right; }
+
+ul.bullet-free { list-style-type: none; }
+
+li.muted {
+    color: #888;
+    font-style: oblique;
+}
+
+li.blue {
+    color: #1b91ff;
+}
+
+.reveal pre code {
+    color: #000;
+    background-color: #fff;
+}

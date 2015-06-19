@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Rust</title>
+
+		<meta name="description" content="Borrowing your cake and eating it before it gets deallocated.">
+		<meta name="author" content="Ashok Menon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/github-gist.css">
+
+                <link rel="stylesheet" href="css/main.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+	  <div class="reveal">
+	    <div class="slides">
+	      <section>
+		<h1>Rust</h1>
+		<h3>Borrowing your cake and eating it before it gets deallocated.</h3>
+		<p>
+                  <small>
+                    Ashok Menon<br/>
+                    <a href="http://github.com/amnn">github.com/amnn</a>
+                  </small>
+                </p>
+	      </section>
+
+	      <!-- Example of nested vertical slides -->
+	      <section>
+		<h2>Why should I care about Rust?</h2>
+                <div class="col left">
+                  <h4>Ruby</h4>
+                  <ul class="bullet-free">
+                    <li>Object-oriented</li>
+                    <li>Functional-ish</li>
+                    <li class="blue">Dynamically typed</li>
+                    <li class="blue">Garbage Collected</li>
+                    <li class="blue">Very High Level</li>
+                    <li>Expressive</li>
+                    <li>
+                      Slow&hellip;<br/>
+                      &hellip;but that doesn't matter most of the time.
+                    </li>
+                  </ul>
+                </div>
+                <div class="col right">
+                  <h4>Rust</h4>
+                  <ul class="bullet-free">
+                    <li>Object-oriented-ish</li>
+                    <li>Functional</li>
+                    <li class="blue">Statically typed</li>
+                    <li class="blue">Manually managed</li>
+                    <li class="blue">Low Level</li>
+                    <li>Expressive</li>
+                    <li>Fast</li>
+                  </ul>
+                </div>
+	      </section>
+	      <section>
+		<h2>Pretty Code</h2>
+		<pre><code data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+int main(int argc, char** argv) {
+  cout << "Hello, world" << endl;
+  return 0;
+}
+		</code></pre>
+		<p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
+	      </section>
+
+	      <section>
+		<h1>Thanks!</h1>
+                <a href="http://rustbyexample.com">Rust By Example</a><br/>
+                <a href="https://doc.rust-lang.org/stable/book/">The Rust Book</a><br/>
+                <a href="https://youtu.be/Q5MLIY1oa1s">Rust for Rubyists</a><br/>
+                #rust on <a href="irc://irc.mozilla.org">irc.mozilla.org</a>
+	      </section>
+	    </div>
+	  </div>
+
+	  <script src="lib/js/head.min.js"></script>
+	  <script src="js/reveal.js"></script>
+
+	  <script>
+
+	    // Full list of configuration options available at:
+	    // https://github.com/hakimel/reveal.js#configuration
+	    Reveal.initialize({
+	    controls: true,
+	    progress: true,
+	    history: true,
+	    center: true,
+
+	    transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+	    // Optional reveal.js plugins
+	    dependencies: [
+	    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+	    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+	    { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+	    { src: 'plugin/zoom-js/zoom.js', async: true },
+	    { src: 'plugin/notes/notes.js', async: true }
+	    ]
+	    });
+
+	  </script>
+
+	</body>
+</html>
