@@ -1,13 +1,5 @@
 require 'benchmark'
 
-def maybe_add(x)
-  if x >= 1000
-    nil
-  else
-    x + 1
-  end
-end
-
 class NilClass
   def and_then
     nil
@@ -20,22 +12,26 @@ class Object
   end
 end
 
+def maybe_inc(x)
+  if x < 1000
+    x + 1
+  end
+end
+
 def bench_add1
   res = 0
   2000.times do
     unless res.nil?
-      res = maybe_add(res)
+      res = maybe_inc(res)
     end
   end
   res
 end
 
 def bench_add2
-  res = 0
-  2000.times do
-    res = res.and_then { |x| maybe_add(x) }
+  (0...2000).reduce(0) do |r,_|
+    r.and_then { |x| maybe_inc(x) }
   end
-  res
 end
 
 include Benchmark
@@ -50,9 +46,9 @@ Benchmark.benchmark(CAPTION, 7, FORMAT, "ns/iter: ") do |bm|
 end
 
 #               user     system      total        real
-# add1      1.930000   0.010000   1.940000 (  1.956756)
-# ns/iter:  193000.0     1000.0   194000.0 (  195675.6)
+# add1      2.270000   0.050000   2.320000 (  2.612915)
+# ns/iter:  227000.0   5000.000   232000.0 (  261291.5)
 
 #               user     system      total        real
-# add2      2.460000   0.010000   2.470000 (  2.485771)
-# ns/iter:  246000.0     1000.0   247000.0 (  248577.1)
+# add2      3.140000   0.040000   3.180000 (  3.343251)
+# ns/iter:  314000.0   4000.000   318000.0 (  334325.1)

@@ -29,14 +29,10 @@ mod tests {
     #[bench]
     fn bench_add2(b : &mut Bencher) {
         b.iter(|| {
-            let mut res = Some(0);
-            for _ in (0..2000) {
-                res = res.and_then(maybe_add2);
-            };
-            res
+            (0..2000).fold(Some(0), |r, _| r.and_then(maybe_add2))
         })
     }
 }
 
-// test option::tests::bench_add1 ... bench:      2840 ns/iter (+/- 323)
-// test option::tests::bench_add2 ... bench:      3221 ns/iter (+/- 436)
+// test option::tests::bench_add1 ... bench:      2898 ns/iter (+/- 1104)
+// test option::tests::bench_add2 ... bench:      3377 ns/iter (+/- 1311)
