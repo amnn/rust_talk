@@ -1,139 +1,211 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
 
-		<title>Rust</title>
+    <title>Rust</title>
 
-		<meta name="description" content="Borrowing your cake and eating it before it gets deallocated.">
-		<meta name="author" content="Ashok Menon">
+    <meta name="description" content="Borrowing your cake and eating it before it gets deallocated.">
+    <meta name="author" content="Ashok Menon">
 
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/white.css" id="theme">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/white.css" id="theme">
 
-		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/github-gist.css">
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/github-gist.css">
 
-                <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
 
-		<!--[if lt IE 9]>
-		<script src="lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
+    <!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+	<section>
+	  <h1>Rust</h1>
+	  <h3>Borrowing your cake and eating it before it gets deallocated.</h3>
+	  <p>
+            <small>
+              Ashok Menon<br/>
+              <a href="http://github.com/amnn">github.com/amnn</a>
+            </small>
+          </p>
+	</section>
 
-	<body>
-	  <div class="reveal">
-	    <div class="slides">
-	      <section>
-		<h1>Rust</h1>
-		<h3>Borrowing your cake and eating it before it gets deallocated.</h3>
-		<p>
-                  <small>
-                    Ashok Menon<br/>
-                    <a href="http://github.com/amnn">github.com/amnn</a>
-                  </small>
-                </p>
-	      </section>
+        <section>
+	  <section>
+	    <h2>Why should I care about Rust?</h2>
+            <div class="col left">
+              <h4>Ruby</h4>
+              <ul class="bullet-free">
+                <li class="highlight">Interpreted</li>
+                <li class="highlight">Dynamically typed</li>
+                <li class="highlight">Garbage Collected</li>
+                <li>Object-oriented</li>
+                <li>Functional-ish</li>
+                <li>Expressive</li>
+                <li>Very High Level</li>
+                <li>
+                  Slow&hellip;<br/>
+                  &hellip;but that doesn't matter most of the time.
+                </li>
+              </ul>
+            </div>
+            <div class="col right">
+              <h4>Rust</h4>
+              <ul class="bullet-free">
+                <li class="highlight">Statically compiled</li>
+                <li class="highlight">Statically typed</li>
+                <li class="highlight">Manually managed</li>
+                <li>Object-oriented-ish</li>
+                <li>Functional</li>
+                <li>Expressive</li>
+                <li>Low Level</li>
+                <li>Fast</li>
+              </ul>
+            </div>
+	  </section>
+        </section>
+        <section>
+          <section>
+            <h2>Case Study: Optional values</h2>
+          </section>
+          <section>
+            <h2>Ruby</h2>
+            <pre class="col left" style="max-width:40%;">
+              <code contenteditable data-trim class="ruby">
+# Inline
+res = 0
+2000.times do
+  unless res.nil?
+    res =
+      if res < 1000
+        res + 1
+      end
+  end
+end
+               </code>
+            </pre>
+            <pre class="col right" style="max-width:55%;">
+              <code contenteditable data-trim class="ruby">
+# Abstracted
+class NilClass
+  def and_then
+    nil
+  end
+end
 
-	      <!-- Example of nested vertical slides -->
-	      <section>
-		<h2>Why should I care about Rust?</h2>
-                <div class="col left">
-                  <h4>Ruby</h4>
-                  <ul class="bullet-free">
-                    <li class="highlight">Interpreted</li>
-                    <li class="highlight">Dynamically typed</li>
-                    <li class="highlight">Garbage Collected</li>
-                    <li>Object-oriented</li>
-                    <li>Functional-ish</li>
-                    <li>Expressive</li>
-                    <li>Very High Level</li>
-                    <li>
-                      Slow&hellip;<br/>
-                      &hellip;but that doesn't matter most of the time.
-                    </li>
-                  </ul>
-                </div>
-                <div class="col right">
-                  <h4>Rust</h4>
-                  <ul class="bullet-free">
-                    <li class="highlight">Statically compiled</li>
-                    <li class="highlight">Statically typed</li>
-                    <li class="highlight">Manually managed</li>
-                    <li>Object-oriented-ish</li>
-                    <li>Functional</li>
-                    <li>Expressive</li>
-                    <li>Low Level</li>
-                    <li>Fast</li>
-                  </ul>
-                </div>
-	      </section>
-	      <section>
-		<h2>Pretty Code</h2>
-		<pre><code data-trim>
-#include &lt;iostream&gt;
-using namespace std;
+class Object
+  def and_then
+    yield self
+  end
+end
 
-int main(int argc, char** argv) {
-  cout << "Hello, world" << endl;
-  return 0;
+2000.times.reduce(0) do |r|
+  r.and_then { |x| x + 1 if x < 1000 }
+end
+                                </code>
+            </pre>
+            <div class="fragment current-invisible invisible current-fragment"
+                 style="clear:both; text-align:center;"
+                 data-fragment-index="0">
+              1880011 / 290052 ns
+            </div>
+          </section>
+          <section>
+            <h2>Rust</h2>
+            <pre>
+              <code contenteditable data-trim
+                    style="font-size:0.9em;line-height:1.2em;"
+                    class="rust">
+// Inline
+let mut res = 0;
+for _ in (0..2000) {
+    match res {
+        -1 => {}
+        x if x < 1000 => res += 1,
+        _             => res = -1
+    }
 }
-		</code></pre>
-		<p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
-	      </section>
 
-	      <section>
-		<h1>Thanks!</h1>
-                <a href="http://rustbyexample.com">Rust By Example</a><br/>
-                <a href="https://doc.rust-lang.org/stable/book/">The Rust Book</a><br/>
-                <a href="https://youtu.be/Q5MLIY1oa1s">Rust for Rubyists</a><br/>
-                #rust on <a href="irc://irc.mozilla.org">irc.mozilla.org</a>
-	      </section>
-	    </div>
-	  </div>
+// Abstracted
+(0..2000).fold(Some(0), |r, _| {
+      r.and_then(|x| {
+          if x < 1000 { Some(x + 1) }
+          else        { None }
+      })
+}
+                 </code>
+            </pre>
+            <div class="fragment current-invisible invisible current-fragment"
+                 style="clear:both; text-align:center;"
+                 data-fragment-index="0">
+              2959 / 3313 ns
+            </div>
+          </section>
+          <section>
+            <h2>Zero Cost Abstractions</h2>
+            <blockquote cite="http://www.stroustrup.com/ETAPS-corrected-draft.pdf">
+              "C++ implementations obey the zero-overhead principle: What
+              you don’t use, you don’t pay for [BS94]. And further: What you
+              do use, you couldn’t hand code any better."
+            </blockquote>
+          </section>
+        </section>
 
-	  <script src="lib/js/head.min.js"></script>
-	  <script src="js/reveal.js"></script>
+	<section>
+	  <h1>Thanks!</h1>
+          <a href="http://rustbyexample.com">Rust By Example</a><br/>
+          <a href="https://doc.rust-lang.org/stable/book/">The Rust Book</a><br/>
+          <a href="https://youtu.be/Q5MLIY1oa1s">Rust for Rubyists</a><br/>
+          #rust on <a href="irc://irc.mozilla.org">irc.mozilla.org</a>
+	</section>
+      </div>
+    </div>
 
-	  <script>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
 
-	    // Full list of configuration options available at:
-	    // https://github.com/hakimel/reveal.js#configuration
-	    Reveal.initialize({
-	    controls: true,
-	    progress: true,
-	    history: true,
-	    center: true,
+    <script>
 
-	    transition: 'slide', // none/fade/slide/convex/concave/zoom
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
 
-	    // Optional reveal.js plugins
-	    dependencies: [
-	    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-	    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-	    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-	    { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
-	    { src: 'plugin/zoom-js/zoom.js', async: true },
-	    { src: 'plugin/notes/notes.js', async: true }
-	    ]
-	    });
+      transition: 'slide', // none/fade/slide/convex/concave/zoom
 
-	  </script>
+      // Optional reveal.js plugins
+      dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+      ]
+      });
 
-	</body>
+    </script>
+  </body>
 </html>
