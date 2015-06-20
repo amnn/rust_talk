@@ -1,16 +1,4 @@
-pub fn maybe_add1(x : i32) -> i32 {
-    // Pre: x >= 0
-    if x >= 1000 { -1 }
-    else         { x + 1 }
-}
-
-pub fn maybe_add2(x : u32) -> Option<u32> {
-    if x >= 1000 { None }
-    else         { Some(x + 1) }
-}
-
 mod tests {
-    use super::*;
     use test::Bencher;
 
     #[bench]
@@ -18,8 +6,10 @@ mod tests {
         b.iter(|| {
             let mut res = 0i32;
             for _ in (0..2000) {
-                if res != -1 {
-                    res = maybe_add1(res)
+                match res {
+                    -1 => {}
+                    x if x < 1000 => res += 1,
+                    _             => res = -1
                 }
             };
             res
@@ -29,10 +19,15 @@ mod tests {
     #[bench]
     fn bench_add2(b : &mut Bencher) {
         b.iter(|| {
-            (0..2000).fold(Some(0), |r, _| r.and_then(maybe_add2))
+            (0..2000).fold(Some(0), |r, _| {
+                r.and_then(|x| {
+                    if x < 1000 { Some(x + 1) }
+                    else        { None }
+                })
+            })
         })
     }
 }
 
-// test option::tests::bench_add1 ... bench:      2898 ns/iter (+/- 1104)
-// test option::tests::bench_add2 ... bench:      3377 ns/iter (+/- 1311)
+// test option::tests::bench_add1 ... bench:      2959 ns/iter (+/- 1509)
+// test option::tests::bench_add2 ... bench:      3313 ns/iter (+/- 961)

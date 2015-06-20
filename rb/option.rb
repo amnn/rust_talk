@@ -12,25 +12,22 @@ class Object
   end
 end
 
-def maybe_inc(x)
-  if x < 1000
-    x + 1
-  end
-end
-
 def bench_add1
   res = 0
   2000.times do
     unless res.nil?
-      res = maybe_inc(res)
+      res =
+        if res < 1000
+          res + 1
+        end
     end
   end
   res
 end
 
 def bench_add2
-  (0...2000).reduce(0) do |r,_|
-    r.and_then { |x| maybe_inc(x) }
+  2000.times.reduce(0) do |r|
+    r.and_then { |x| x + 1 if x < 1000 }
   end
 end
 
@@ -46,9 +43,9 @@ Benchmark.benchmark(CAPTION, 7, FORMAT, "ns/iter: ") do |bm|
 end
 
 #               user     system      total        real
-# add1      2.270000   0.050000   2.320000 (  2.612915)
-# ns/iter:  227000.0   5000.000   232000.0 (  261291.5)
+# add1      1.810000   0.020000   1.830000 (  1.880111)
+# ns/iter:  181000.0   2000.000   183000.0 (  188011.1)
 
 #               user     system      total        real
-# add2      3.140000   0.040000   3.180000 (  3.343251)
-# ns/iter:  314000.0   4000.000   318000.0 (  334325.1)
+# add2      2.820000   0.020000   2.840000 (  2.900522)
+# ns/iter:  282000.0   2000.000   284000.0 (  290052.2)
