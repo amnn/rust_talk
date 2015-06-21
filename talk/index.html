@@ -193,6 +193,126 @@ fn h(x : &amp;Foo) -> i32 { x.bar() }
           </section>
         </section>
 
+        <section>
+          <section>
+            <h2>Basic Syntax</h2>
+            <pre>
+              <code contenteditable data-trm
+                    style="font-size:0.9em;line-height:1.2em;"
+                    class="rust">
+fn main() {
+    let program = "+ + * - /";
+    let mut accumulator = 0;
+
+    for token in program.chars() {
+        match token {
+            '+' => accumulator += 1,
+            '-' => accumulator -= 1,
+            '*' => accumulator *= 2,
+            '/' => accumulator /= 2,
+            _ => { /* ignore everything else */ }
+        }
+    }
+
+    println!("\`{}\` -> {}", program, accumulator);
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Basic Syntax</h2>
+            <pre>
+              <code contenteditable data-trim
+                    style="font-size:0.7em;line-height:1.0em;"
+                    class="rust">
+use std::sync::mpsc;
+use std::thread;
+
+const NTHREADS : i32 = 3;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    for id in 0..NTHREADS {
+        let thread_tx = tx.clone();
+
+        thread::spawn(move || {
+            thread_tx.send(id).unwrap();
+            println!("thread {} finished", id);
+        });
+    }
+
+    let mut ids = Vec::with_capacity(NTHREADS as usize);
+    for _ in 0..NTHREADS {
+        ids.push(rx.recv());
+    }
+
+    println!("{:?}", ids);
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Type Annotations</h2>
+            <pre>
+              <code contenteditable data-trm
+                    style="font-size:0.9em;line-height:1.2em;"
+                    class="rust">
+fn main() {
+    let program : &amp;'static str = "+ + * - /";
+    let mut accumulator : i32 = 0;
+
+    for token in program.chars() {
+        match token {
+            '+' => accumulator += 1,
+            '-' => accumulator -= 1,
+            '*' => accumulator *= 2,
+            '/' => accumulator /= 2,
+            _ => { /* ignore everything else */ }
+        }
+    }
+
+    println!("\`{}\` -> {}", program, accumulator);
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Type Annotations</h2>
+            <pre>
+              <code contenteditable data-trim
+                    style="font-size:0.7em;line-height:1.0em;"
+                    class="rust">
+use std::sync::mpsc::{Sender, Receiver, RecvError};
+use std::sync::mpsc;
+use std::thread;
+
+const NTHREADS : i32 = 3;
+
+fn main() {
+    let (tx, rx) : (Sender&lt;i32&gt;, Receiver&lt;i32&gt;) = mpsc::channel();
+
+    for id in 0..NTHREADS {
+        let thread_tx : Sender&lt;i32&gt; = tx.clone();
+
+        thread::spawn(move || {
+            thread_tx.send(id).unwrap();
+            println!("thread {} finished", id);
+        });
+    }
+
+    let mut ids : Vec&lt;Result&lt;i32, RecvError&gt;&gt; = Vec::with_capacity(NTHREADS as usize);
+    for _ in 0..NTHREADS {
+        ids.push(rx.recv());
+    }
+
+    println!("{:?}", ids);
+}
+              </code>
+            </pre>
+          </section>
+        </section>
+
 	<section>
 	  <h1>Thanks!</h1>
           <a href="http://rustbyexample.com">Rust By Example</a><br/>
