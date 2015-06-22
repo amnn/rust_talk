@@ -301,12 +301,83 @@ fn main() {
         });
     }
 
-    let mut ids : Vec&lt;Result&lt;i32, RecvError&gt;&gt; = Vec::with_capacity(NTHREADS as usize);
+    let mut ids : Vec&lt;Result&lt;i32, RecvError&gt;&gt; =
+        Vec::with_capacity(NTHREADS as usize);
+
     for _ in 0..NTHREADS {
         ids.push(rx.recv());
     }
 
     println!("{:?}", ids);
+}
+              </code>
+            </pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h2>Lifetimes</h2>
+          </section>
+          <section>
+            <h2>What's wrong with this code?</h2>
+            <pre>
+              <code contenteditable data-trim
+                    style="font-size:0.7em;line-height:1.0em;"
+                    class="cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int *mk_int() { int x; return &amp;x; }
+
+int *sum(int lo, int hi)
+{
+  int *acc = mk_int();
+  for(int i = lo; i &lt;= hi; ++i)
+    *acc += i;
+
+  return acc;
+}
+
+int main(int, char **)
+{
+  for(int i = 0; i &lt; 1000; ++i) {
+    int *x = sum(0, i);
+    cout << "Sum from 0 to " << i << ": " << *x << "\n";
+  }
+
+  return 0;
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>What about this code?</h2>
+            <pre>
+              <code contenteditable data-trim
+                    style="font-size:0.7em;line-height:1.0em;"
+                    class="cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int *mk_int() { return new int; }
+
+int *sum(int lo, int hi)
+{
+  int *acc = mk_int();
+  for(int i = lo; i &lt;= hi; ++i)
+    *acc += i;
+
+  return acc;
+}
+
+int main(int, char **)
+{
+  for(int i = 0; i &lt; 1000; ++i) {
+    int *x = sum(0, i);
+    cout << "Sum from 0 to " << i << ": " << *x << "\n";
+  }
+
+  return 0;
 }
               </code>
             </pre>
