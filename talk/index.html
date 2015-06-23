@@ -466,6 +466,34 @@ int main(int, char **)
               </code>
             </pre>
           </section>
+          <section>
+            <h2>Seems to work&hellip;</h2>
+            <pre class="shell-out">
+              <code contenteditable data-trim
+                    style="font-size:0.7em;line-height:1.0em;"
+                    class="sh">
+# Clang 6.1.0
+$ clang++ -Wall -Werror -o clang/second_try second_try.cpp
+$ clang/second_try
+Sum from 0 to 0: 0
+Sum from 0 to 1: 1
+Sum from 0 to 2: 3
+... [snip] ...
+Sum from 0 to 998: 498501
+Sum from 0 to 999: 499500
+
+# GCC 4.9.2
+$ g++-4.9 -Wall -Werror -o gpp/second_try second_try.cpp
+$ gpp/second_try
+Sum from 0 to 0: 0
+Sum from 0 to 1: 1
+Sum from 0 to 2: 3
+... [snip] ...
+Sum from 0 to 998: 498501
+Sum from 0 to 999: 499500
+              </code>
+            </pre>
+          </section>
         </section>
 
 	<section>
