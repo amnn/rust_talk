@@ -314,9 +314,10 @@ fn main() {
             </pre>
           </section>
         </section>
+
         <section>
           <section>
-            <h2>Lifetimes</h2>
+            <h2>Memory Safety 1</h2>
           </section>
           <section>
             <h2>What's wrong with this code?</h2>
@@ -354,7 +355,7 @@ int main(int, char **)
             <h2>When do we find out?</h2>
             <pre class="shell-out">
               <code data-trim
-                    style="font-size:0.7em;line-height:1.0em"
+                    style="font-size:0.7em;line-height:1.0em;"
                     class="sh">
 # Clang 6.1.0
 $ clang++ -Wall -Werror -o clang/stack_alloc stack_alloc.cpp
@@ -372,6 +373,32 @@ stack_alloc.cpp:4:21: error: address of local variable 'x' returned [-Werror=ret
 cc1plus: all warnings being treated as errors
               </code>
             </pre>
+          </section>
+          <section>
+            <h2>Rust</h2>
+            <pre>
+              <code contenteditable data-trim
+                    style="font-size:0.8em;line-height:1.0em;"
+                    class="rust">
+fn mk_int<'a>() -> &'a mut i32 { let mut x : i32; &amp;mut x }
+
+fn sum<'a>(lo : i32, hi : i32) -> &'a i32 {
+    let acc = mk_int();
+    for i in lo..(hi+1) { *acc += i };
+    acc
+}
+
+// src/stack_alloc.rs:1:56: 1:57 error: `x` does not live long enough
+// src/stack_alloc.rs:1 fn mk_int<'a>() -> &'a mut i32 { let mut x : i32; &amp;mut x }
+//                                                                             ^
+              </code>
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Memory Safety 2</h2>
           </section>
           <section>
             <h2>Being Wilfully Evasive</h2>
@@ -435,6 +462,34 @@ Sum from 0 to 999: 499500
             </pre>
           </section>
           <section>
+            <h2>Rust</h2>
+            <pre>
+              <code contenteditable data-trim
+                    style="font-size:0.68em;line-height:1.0em;"
+                    class="rust">
+fn id&lt;T&gt;(x : T) -> T { x }
+
+fn mk_int<'a>() -> &'a mut i32 { let mut x : i32; id(&amp;mut x) }
+
+fn sum<'a>(lo : i32, hi : i32) -> &'a i32 {
+    let acc = mk_int();
+    for i in lo..(hi+1) { *acc += i };
+    acc
+}
+
+// src/sneaky_stack_alloc.rs:5:63: 5:64 error: `x` does not live long enough
+// src/sneaky_stack_alloc.rs:5     fn mk_int<'a>() -> &'a mut i32 { let mut x : i32; id(&amp;mut x) }
+//                                                                                           ^
+              </code>
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Memory Safety 3</h2>
+          </section>
+          <section>
             <h2>What about this code?</h2>
             <pre>
               <code contenteditable data-trim
@@ -491,6 +546,21 @@ Sum from 0 to 2: 3
 ... [snip] ...
 Sum from 0 to 998: 498501
 Sum from 0 to 999: 499500
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Rust</h2>
+            <pre>
+              <code contenteditable data-trim
+                    class="rust">
+fn mk_int() -> Box&lt;i32&gt; { Box::new(0) }
+
+fn sum<'a>(lo : i32, hi : i32) -> Box&lt;i32&gt; {
+    let mut acc = mk_int();
+    for i in lo..(hi+1) { *acc += i };
+    acc
+}
               </code>
             </pre>
           </section>
