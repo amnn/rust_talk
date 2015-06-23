@@ -10,10 +10,10 @@ stack_alloc: clang/stack_alloc gpp/stack_alloc ;
 leaky: clang/leaky gpp/leaky ;
 
 clang/%: %.cpp
-	-$(CLANG) -o $@ $<
+	-$(CLANG) -Wall -Werror -o $@ $<
 
 gpp/%: %.cpp
-	-$(GCC) -o $@ $<
+	-$(GCC) -Wall -Werror -o $@ $<
 
 clean:
 	-rm clang/*
