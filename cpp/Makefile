@@ -1,7 +1,13 @@
 GCC   = g++-4.9
 CLANG = clang++
 
-all: clang/stack_alloc clang/leaky gpp/stack_alloc gpp/leaky
+all: sneaky_stack_alloc stack_alloc leaky
+
+sneaky_stack_alloc: clang/sneaky_stack_alloc gpp/sneaky_stack_alloc ;
+
+stack_alloc: clang/stack_alloc gpp/stack_alloc ;
+
+leaky: clang/leaky gpp/leaky ;
 
 clang/%: %.cpp
 	-$(CLANG) -o $@ $<
