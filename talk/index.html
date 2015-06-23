@@ -351,6 +351,90 @@ int main(int, char **)
             </pre>
           </section>
           <section>
+            <h2>When do we find out?</h2>
+            <pre class="shell-out">
+              <code data-trim
+                    style="font-size:0.7em;line-height:1.0em"
+                    class="sh">
+# Clang 6.1.0
+$ clang++ -Wall -Werror -o clang/stack_alloc stack_alloc.cpp
+stack_alloc.cpp:4:32: error: address of stack memory associated with local variable 'x' returned [-Werror,-Wreturn-stack-address]
+int *mk_int() { int x; return &x; }
+                               ^
+1 error generated.
+
+# GCC 4.9.2
+$ g++-4.9 -Wall -Werror -o gpp/stack_alloc stack_alloc.cpp
+stack_alloc.cpp: In function 'int* mk_int()':
+stack_alloc.cpp:4:21: error: address of local variable 'x' returned [-Werror=return-local-addr]
+ int *mk_int() { int x; return &x; }
+                     ^
+cc1plus: all warnings being treated as errors
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Being Wilfully Evasive</h2>
+            <pre>
+              <code contenteditable data-trim
+                    style="font-size:0.7em;line-height:1.0em;"
+                    class="cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+template&lt;typename T&gt; T id(T x) { return x; }
+
+int *mk_int() { int x; return id(&amp;x); }
+
+int *sum(int lo, int hi)
+{
+  int *acc = mk_int();
+  for(int i = lo; i &lt;= hi; ++i)
+    *acc += i;
+
+  return acc;
+}
+
+int main(int, char **)
+{
+  for(int i = 0; i &lt; 1000; ++i) {
+    int *x = sum(0, i);
+    cout << "Sum from 0 to " << i << ": " << *x << "\n";
+  }
+
+  return 0;
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>And Paying for it</h2>
+            <pre>
+              <code data-trim
+                    style="font-size:0.7em;line-height:1.0em;"
+                    class="sh">
+# Clang 6.1.0
+$ clang++ -Wall -Werror -o clang/sneaky_stack_alloc sneaky_stack_alloc.cpp
+$ clang/sneaky_stack_alloc
+Sum from 0 to 0: 1
+Sum from 0 to 1: 1
+... [snip] ...
+Sum from 0 to 998: 1
+Sum from 0 to 999: 1
+
+# GCC 4.9.2
+$ g++-4.9 -Wall -Werror -o gpp/sneaky_stack_alloc sneaky_stack_alloc.cpp
+$ gpp/sneaky_stack_alloc
+Sum from 0 to 0: 32767
+Sum from 0 to 1: 1
+Sum from 0 to 2: 3
+... [snip] ...
+Sum from 0 to 998: 498501
+Sum from 0 to 999: 499500
+              </code>
+            </pre>
+          </section>
+          <section>
             <h2>What about this code?</h2>
             <pre>
               <code contenteditable data-trim
