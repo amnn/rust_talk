@@ -23,13 +23,13 @@ mod will_fail {
         unsafe {
             make_room(dest, dest_off + len);
             for (i, x) in iter {
-                dest.insert(dest_off + i, x.clone());
+                *dest.get_mut(dest_off + i) = x.clone();
             }
         }
     }
 
     fn test() {
         let mut v = vec![1, 2, 3];
-        array_copy(&mut v, &mut v, 0, 1, 3);
+        array_copy(&v, &mut v, 0, 1, 3);
     }
 }
