@@ -840,7 +840,7 @@ note: previous borrow ends here
 using namespace std;
 
 template &lt;typename T&gt; void
-makeRoom(vector&lt;T&gt; &v, size_t requirement)
+make_room(vector&lt;T&gt; &v, size_t requirement)
 {
   size_t newSize = max(requirement, v.size());
   v.reserve(newSize);
@@ -852,7 +852,7 @@ array_copy(vector&lt;T&gt; &amp;src, vector&lt;T&gt; &amp;dest,
            size_t srcOff, size_t destOff,
            size_t len)
 {
-  makeRoom(dest, destOff + len);
+  make_room(dest, destOff + len);
   for(unsigned int i = 0; i < len; ++i)
     dest[destOff + i] = src[srcOff + i];
 }
