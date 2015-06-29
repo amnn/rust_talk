@@ -1,13 +1,15 @@
-GCC   = g++-4.9
-CLANG = clang++
+GCC   = g++-4.9 --std=c++14
+CLANG = clang++ --std=c++14
 
-all: sneaky_stack_alloc stack_alloc leaky
+all: sneaky_stack_alloc stack_alloc leaky invalidate
 
 sneaky_stack_alloc: clang/sneaky_stack_alloc gpp/sneaky_stack_alloc ;
 
 stack_alloc: clang/stack_alloc gpp/stack_alloc ;
 
 leaky: clang/leaky gpp/leaky ;
+
+invalidate: clang/invalidate gpp/invalidate ;
 
 clang/%: %.cpp
 	-$(CLANG) -Wall -Werror -o $@ $<

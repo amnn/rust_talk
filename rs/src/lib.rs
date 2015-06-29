@@ -6,3 +6,4 @@ mod trait_object;
 mod stack_alloc;
 mod sneaky_stack_alloc;
 mod proper_alloc;
+mod invalidate;
