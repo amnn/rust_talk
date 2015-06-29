@@ -3,7 +3,7 @@
 using namespace std;
 
 template <typename T> void
-makeRoom(vector<T> &v, size_t requirement)
+make_room(vector<T> &v, size_t requirement)
 {
   size_t newSize = max(requirement, v.size());
   v.reserve(newSize);
@@ -15,8 +15,8 @@ array_copy(vector<T> &src, vector<T> &dest,
            size_t srcOff, size_t destOff,
            size_t len)
 {
-  makeRoom(dest, destOff + len);
-  for(int i = 0; i < len; ++i)
+  make_room(dest, destOff + len);
+  for(unsigned int i = 0; i < len; ++i)
     dest[destOff + i] = src[srcOff + i];
 }
 
