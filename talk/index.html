@@ -317,7 +317,156 @@ fn main() {
 
         <section>
           <section>
-            <h2>Memory Safety 1</h2>
+            <h2>Ownership</h2>
+          </section>
+          <section>
+            <h2>Move Semantics</h2>
+            <pre>
+              <code contenteditable data-trim
+                    class="rust">
+fn main() {
+    let v = vec![1, 2, 3];
+    let w = v; // v is moved into w
+
+    println!("v[0] is: {}", v[0]);
+    // error: use of moved value: `v`
+    // println!("v[0] is: {}", v[0]);
+    //                         ^
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>&hellip;In Functions</h2>
+            <pre>
+              <code contenteditable data-trim
+                    class="rust">
+fn take(v : Vec&lt;i32&gt;) {
+    // do important stuff
+}
+
+fn main() {
+    let v = vec![1, 2, 3];
+    take(v); // v is moved into the parameter of take
+
+    println!("v[0] is: {}", v[0]);
+    // error: use of moved value: `v`
+    // println!("v[0] is: {}", v[0]);
+    //                         ^
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Copy types</h2>
+            <pre>
+              <code contenteditable data-trim
+                    class="rust">
+fn main() {
+    let n = 1;
+    let m = n;  // n is copied into m
+
+    println!("n is: {}", n);
+}
+              </code>
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Beyond Ownership</h2>
+            <p>What if we want <code>v</code> back? (A first try)</p>
+            <pre>
+              <code contenteditable data-trim
+                    class="rust">
+fn take(v : Vec&lt;i32&gt;) -> Vec&lt;i32&gt; {
+    // do important stuff
+    v
+}
+
+fn main() {
+    let v = vec![1, 2, 3];
+    let v = take(v);
+    println!("v[0] is: {}", v[0]);
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>&hellip;Could get tedious</h2>
+            <pre>
+              <code contenteditable data-trim
+                    class="rust">
+fn slice&lt;T&gt;(v : Vec&lt;T&gt;, start : i32, len : i32)
+            -> (Vec&lt;T&gt;, Vec&lt;T&gt;) {
+    // do important stuff
+    (v, copy)
+}
+
+fn concat&lt;T : Clone&gt;(xs : Vec&lt;T&gt;, ys : Vec&lt;T&gt;)
+                     -> (Vec&lt;T&gt;, Vec&lt;T&gt;, Vec&lt;T&gt;) {
+    // do important stuff
+    (xs, ys, zs)
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Immutable References</h2>
+            <pre>
+              <code contenteditable data-trim
+                    class="rust">
+fn slice&lt;T&gt;(v : &amp;Vec&lt;T&gt;, start : i32, len : i32)
+            -> Vec&lt;T&gt; {
+    // do important stuff
+    copy
+}
+
+fn concat&lt;T : Clone&gt;(xs : &amp;Vec&lt;T&gt;, ys : &amp;Vec&lt;T&gt;) -> Vec&lt;T&gt; {
+    // do important stuff
+    zs
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Mutable References</h2>
+            <pre>
+              <code contenteditable data-trim
+                    class="rust">
+let mut x = 5;
+{
+    let y = &amp;mut x;
+    *y += 1;
+}
+println!("{}", x); // Outputs: 6
+
+fn push_5(v : &amp;mut Vec&lt;i32&gt;) {
+    v.push(5);
+}
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Borrow Rules</h2>
+            <ul>
+              <li>Lives in a smaller scope than the owner</li>
+              <li>
+                At any one time, there can be
+                <ul>
+                  <li>at most one mutable reference (<code>&amp;mut T</code>)</li>
+                  <li>or any number of immutable references (<code>&amp; T</code>)</li>
+                </ul>
+              </li>
+              <li class="highlight">These rules are checked statically</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Memory Issue #1</h2>
           </section>
           <section>
             <h2>What's wrong with this code?</h2>
@@ -380,25 +529,19 @@ cc1plus: all warnings being treated as errors
               <code contenteditable data-trim
                     style="font-size:0.8em;line-height:1.0em;"
                     class="rust">
-fn mk_int<'a>() -> &'a mut i32 { let mut x : i32; &amp;mut x }
+fn mk_int&lt;'a&gt;() -> &amp;'a mut i32 { let mut x : i32; &amp;mut x }
 
-fn sum<'a>(lo : i32, hi : i32) -> &'a i32 {
+fn sum&lt;'a&gt;(lo : i32, hi : i32) -> &'a i32 {
     let acc = mk_int();
     for i in lo..(hi+1) { *acc += i };
     acc
 }
 
 // src/stack_alloc.rs:1:56: 1:57 error: `x` does not live long enough
-// src/stack_alloc.rs:1 fn mk_int<'a>() -> &'a mut i32 { let mut x : i32; &amp;mut x }
+// src/stack_alloc.rs:1 fn mk_int&lt;'a&gt;() -> &amp;'a mut i32 { let mut x : i32; &amp;mut x }
 //                                                                             ^
               </code>
             </pre>
-          </section>
-        </section>
-
-        <section>
-          <section>
-            <h2>Memory Safety 2</h2>
           </section>
           <section>
             <h2>Being Wilfully Evasive</h2>
@@ -469,16 +612,16 @@ Sum from 0 to 999: 499500
                     class="rust">
 fn id&lt;T&gt;(x : T) -> T { x }
 
-fn mk_int<'a>() -> &'a mut i32 { let mut x : i32; id(&amp;mut x) }
+fn mk_int&lt;'a&gt;() -> &amp;'a mut i32 { let mut x : i32; id(&amp;mut x) }
 
-fn sum<'a>(lo : i32, hi : i32) -> &'a i32 {
+fn sum&lt;'a&gt;(lo : i32, hi : i32) -> &amp;'a i32 {
     let acc = mk_int();
     for i in lo..(hi+1) { *acc += i };
     acc
 }
 
 // src/sneaky_stack_alloc.rs:5:63: 5:64 error: `x` does not live long enough
-// src/sneaky_stack_alloc.rs:5     fn mk_int<'a>() -> &'a mut i32 { let mut x : i32; id(&amp;mut x) }
+// src/sneaky_stack_alloc.rs:5     fn mk_int&lt;'a&gt;() -> &amp;'a mut i32 { let mut x : i32; id(&amp;mut x) }
 //                                                                                           ^
               </code>
             </pre>
@@ -487,7 +630,7 @@ fn sum<'a>(lo : i32, hi : i32) -> &'a i32 {
 
         <section>
           <section>
-            <h2>Memory Safety 3</h2>
+            <h2>Memory Issue #2</h2>
           </section>
           <section>
             <h2>What about this code?</h2>
@@ -556,10 +699,190 @@ Sum from 0 to 999: 499500
                     class="rust">
 fn mk_int() -> Box&lt;i32&gt; { Box::new(0) }
 
-fn sum<'a>(lo : i32, hi : i32) -> Box&lt;i32&gt; {
+fn sum(lo : i32, hi : i32) -> Box&lt;i32&gt; {
     let mut acc = mk_int();
     for i in lo..(hi+1) { *acc += i };
     acc
+}
+              </code>
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Memory Issue #3</h2>
+          </section>
+
+          <section>
+            <h2>Writing Functioning C++, Take 3</h2>
+            <pre class="col left" style="max-width:55%">
+              <code contenteditable data-trim
+                    class="cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+int main(int, char **)
+{
+  auto v = vector&lt;int&gt; {1, 2, 3};
+
+  for(const auto &i : v)
+    for(int j = 0; j <= i; ++j) {
+      cout << i << ", " << j << '\n';
+      v.insert(v.begin(), i + j);
+    }
+
+  return 0;
+}
+              </code>
+            </pre>
+            <pre class="fragment col right shell-out" style="max-width:40%">
+              <code data-trim class="sh">
+$ clang++ --std=c++14 -Wall -Werror -o clang/invalidate invalidate.cpp
+$ clang/invalidate
+1, 0
+1, 1
+2, 0
+2, 1
+1342177280, 2
+1342177280, 3
+1342177280, 4
+1342177280, 5
+1342177280, 6
+1342177280, 7
+# ...[snip]...
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Rust</h2>
+            <pre>
+              <code contenteditable data-trim
+                    class="rust">
+let mut v = vec![1, 2, 3];
+for i in &v {
+    for j in 0..(i+1) {
+        println!("{}, {}", i, j);
+        v.insert(0, i + j);
+    }
+}
+              </code>
+            </pre>
+            <pre class="fragment shell-out">
+              <code contenteditable data-trim
+                    style="font-size:0.7em; line-height:1.0em"
+                    class="sh">
+error: cannot borrow `v` as mutable because it is also borrowed as immutable
+8                 v.insert(0, i + j);
+                  ^
+note: previous borrow of `v` occurs here; the immutable borrow prevents subsequent moves or mutable borrows of `v` until the borrow ends
+5         for i in &v {
+                    ^
+note: previous borrow ends here
+5         for i in &v {
+6             for j in 0..(i+1) {
+7                 println!("{}, {}", i, j);
+8                 v.insert(0, i + j);
+9             }
+10         }
+           ^
+              </code>
+            </pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Memory Issue #4</h2>
+          </section>
+          <section>
+            <h2>Maybe Let's not use C++</h2>
+            <pre class="col left" style="max-width:55%">
+              <code contenteditable data-trim
+                    style="font-size:0.65em;line-height:1.0em"
+                    class="cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+template &lt;typename T&gt; void
+makeRoom(vector&lt;T&gt; &v, size_t requirement)
+{
+  size_t newSize = max(requirement, v.size());
+  v.reserve(newSize);
+  v.resize(newSize);
+}
+
+template &lt;typename T&gt; void
+array_copy(vector&lt;T&gt; &amp;src, vector&lt;T&gt; &amp;dest,
+           size_t srcOff, size_t destOff,
+           size_t len)
+{
+  makeRoom(dest, destOff + len);
+  for(unsigned int i = 0; i < len; ++i)
+    dest[destOff + i] = src[srcOff + i];
+}
+
+              </code>
+              <code contenteditable data-trim
+                    style="font-size:0.65em;line-height:1.0em"
+                    class="cpp fragment">
+int main(int, char **)
+{
+  auto v = vector&lt;int&gt; {1, 2, 3};
+  array_copy(v, v, 0, 1, 3);
+
+  for(auto i : v) { cout << i << '\n'; }
+}
+              </code>
+            </pre>
+            <pre class="col right shell-out fragment" style="max-width: 40%">
+              <code class="sh">
+$ clang++ --std=c++14 -Wall -Werror -o clang/alias alias.cpp
+
+$ clang/alias
+1
+1
+1
+1
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Rust</h2>
+            <pre>
+              <code contenteditable data-trim
+                    style="font-size:0.65em;line-height:1.0em"
+                    class="rust">
+unsafe fn make_room&lt;T&gt;(v : &amp;mut Vec&lt;T&gt;, req : usize) {
+    let new_size = max(req, v.len());
+    v.reserve(new_size);
+    v.set_len(new_size);
+}
+
+fn array_copy&lt;T : Clone&gt;(
+    src : &amp;Vec&lt;T&gt;, dest : &amp;mut Vec&lt;T&gt;,
+    src_off : usize, dest_off : usize,
+    len : usize) {
+
+    let iter =
+        src[src_off..src_off+len]
+          .iter().enumerate();
+
+    unsafe {
+        make_room(dest, dest_off + len);
+        for (i, x) in iter {
+            *dest.get_mut(dest_off + i).unwrap() = x.clone();
+        }
+    }
+}
+
+fn main() {
+    let mut v = vec![1, 2, 3];
+    array_copy(&amp;v, &amp;mut v, 0, 1, 3);
+    //                  ^
+    // error: cannot borrow `v` as mutable because it is also borrowed as immutable
 }
               </code>
             </pre>
