@@ -174,6 +174,7 @@ for _ in (0..2000) {
             <h2>Traits</h2>
             <pre>
               <code contenteditable data-trim
+                    style="font-size:0.9em;line-height:1.0em"
                     class="rust">
 trait Foo {
   fn bar(&amp;self) -> i32;
@@ -188,6 +189,38 @@ fn f(a : &amp;A) -> i32 { a.bar() }
 fn g&lt;T : Foo&gt;(x : &amp;T) -> i32 { x.bar() }
 fn h(x : &amp;Foo) -> i32 { x.bar() }
 
+fn main() {
+    let a = A {};
+    f(a); g(a); h(a);
+}
+
+              </code>
+            </pre>
+          </section>
+          <section>
+            <h2>Macros</h2>
+            <pre class="col left" style="max-width:40%">
+              <code contenteditable data-trim
+                    class="rust">
+let mut v = Vec::new();
+v.push(1);
+v.push(2);
+v.push(3);
+// ...etc
+              </code>
+            </pre>
+            <pre class="col right fragment" style="max-width:55%">
+              <code contenteditable data-trim
+                    class="rust">
+macro_rules! vec {
+    ($($x : expr),*) => {{
+        let mut v = Vec::new();
+        $(v.push($x);)*
+        v
+    }}
+}
+
+let v = vec![1, 2, 3];
               </code>
             </pre>
           </section>
